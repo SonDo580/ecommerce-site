@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/server.js",
-    "dev": "ts-node-dev --respawn --transpile-only src/server.ts "
+    "dev": "ts-node-dev --respawn --transpile-only -r tsconfig-paths/register src/server.ts "
   },
   "keywords": [],
   "author": "",
@@ -15,6 +15,7 @@
     "compression": "^1.7.4",
     "express": "^4.19.2",
     "helmet": "^7.1.0",
+    "mongoose": "^8.2.4",
     "morgan": "^1.10.0"
   },
   "devDependencies": {
@@ -23,6 +24,7 @@
     "@types/morgan": "^1.9.9",
     "@types/node": "^20.11.30",
     "ts-node-dev": "^2.0.0",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.4.3"
   }
 }

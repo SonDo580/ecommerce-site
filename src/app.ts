@@ -3,9 +3,9 @@ import morgan from "morgan";
 import helmet from "helmet";
 import compression from "compression";
 
-const app = express();
+import "./dbs/db.init";
 
-// Connect DB
+const app = express();
 
 // Middlewares
 app.use(morgan("dev"));
