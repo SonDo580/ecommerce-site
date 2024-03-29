@@ -4,6 +4,8 @@ import {
   CHECKING_INTERVAL,
   maxNumberOfConnections,
 } from "@root/constants/db.const";
+import { DataSizeConverter } from "@root/utils/converter.util";
+import { MemoryUnit } from "@root/constants/unit.const";
 
 export class DatabaseHelper {
   static countConnections(): void {
@@ -29,7 +31,14 @@ export class DatabaseHelper {
 
   private static checkMemoryUsage(): void {
     const memoryUsed: number = this.getMemoryUsage();
-    console.log(`Memory usage: ${memoryUsed / 1024 / 1024} MiB`);
+    const targetMemoryUnit: MemoryUnit = MemoryUnit.MiB;
+    const convertedMemoryUsed: number = DataSizeConverter.convert(
+      memoryUsed,
+      MemoryUnit.B,
+      targetMemoryUnit
+    );
+
+    console.log(`Memory usage: ${convertedMemoryUsed}${targetMemoryUnit}`);
   }
 
   /**
