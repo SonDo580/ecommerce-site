@@ -5,8 +5,9 @@ const DB_CONNECTIONS_PER_CORE = 5; // assume that 1 CPU core can handle 5 MongoD
 const MAX_POOL_SIZE = 50; // maximum number of connections in the pool
 
 // Calculated
-const numberOfCPUCores = os.cpus().length;
-const maxNumberOfConnections = numberOfCPUCores * DB_CONNECTIONS_PER_CORE;
+const numberOfCPUCores: number = os.cpus().length;
+const maxNumberOfConnections: number =
+  numberOfCPUCores * DB_CONNECTIONS_PER_CORE;
 
 export {
   CHECKING_INTERVAL,

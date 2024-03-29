@@ -6,20 +6,20 @@ import {
 } from "@root/constants/db.const";
 
 export class DatabaseHelper {
-  static countConnections() {
-    const numberOfConnections = mongoose.connections.length;
+  static countConnections(): void {
+    const numberOfConnections: number = mongoose.connections.length;
     console.log(`Number of connections: ${numberOfConnections}`);
   }
 
-  static periodicChecking() {
+  static periodicChecking(): void {
     setInterval(() => {
       this.checkOverload();
       this.checkMemoryUsage();
     }, CHECKING_INTERVAL);
   }
 
-  private static checkOverload() {
-    const numberOfConnections = mongoose.connections.length;
+  private static checkOverload(): void {
+    const numberOfConnections: number = mongoose.connections.length;
     console.log(`Active connections: ${numberOfConnections}`);
 
     if (numberOfConnections > maxNumberOfConnections) {
@@ -27,8 +27,16 @@ export class DatabaseHelper {
     }
   }
 
-  private static checkMemoryUsage() {
-    const memoryUsed = process.memoryUsage().rss;
+  private static checkMemoryUsage(): void {
+    const memoryUsed: number = this.getMemoryUsage();
     console.log(`Memory usage: ${memoryUsed / 1024 / 1024} MiB`);
+  }
+
+  /**
+   * Get the Resident Set Size (RSS) in bytes.
+   * (RSS is the portion of memory occupied by a process)
+   */
+  private static getMemoryUsage(): number {
+    return process.memoryUsage().rss;
   }
 }
