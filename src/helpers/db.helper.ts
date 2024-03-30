@@ -8,16 +8,24 @@ import { DataSizeConverter } from "@root/utils/converter.util";
 import { MemoryUnit } from "@root/constants/unit.const";
 
 export class DatabaseHelper {
+  private static intervalId: NodeJS.Timeout;
+
   static countConnections(): void {
     const numberOfConnections: number = mongoose.connections.length;
     console.log(`Number of connections: ${numberOfConnections}`);
   }
 
   static periodicChecking(): void {
-    setInterval(() => {
+    this.intervalId = setInterval(() => {
       this.checkOverload();
       this.checkMemoryUsage();
     }, CHECKING_INTERVAL);
+  }
+
+  static cleanUpBeforeExit(): void {
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+    }
   }
 
   private static checkOverload(): void {
