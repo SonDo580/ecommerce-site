@@ -31,10 +31,12 @@ export class DatabaseHelper {
 
   private static checkMemoryUsage(): void {
     const memoryUsed: number = this.getMemoryUsage();
+    const sourceMemoryUnit: MemoryUnit = MemoryUnit.B;
     const targetMemoryUnit: MemoryUnit = MemoryUnit.MiB;
+
     const convertedMemoryUsed: number = DataSizeConverter.convert(
       memoryUsed,
-      MemoryUnit.B,
+      sourceMemoryUnit,
       targetMemoryUnit
     );
 

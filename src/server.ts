@@ -1,9 +1,10 @@
 import { app } from "./app";
+import { GENERAL_CONFIG } from "./configs/general.config";
 
-const port = process.env.PORT || 5000;
+const { PORT } = GENERAL_CONFIG;
 
-const server = app.listen(port, () => {
-  console.log(`Server listening at port ${port}`);
+const server = app.listen(PORT, () => {
+  console.log(`Server listening at port ${PORT}`);
 });
 
 // press "Ctrl + C"

@@ -2,6 +2,9 @@ import mongoose from "mongoose";
 
 import { DatabaseHelper } from "@root/helpers/db.helper";
 import { MAX_POOL_SIZE } from "@root/constants/db.const";
+import { GENERAL_CONFIG } from "@root/configs/general.config";
+
+const { MONGODB_URL, NODE_ENV } = GENERAL_CONFIG;
 
 class Database {
   static instance: Database;
@@ -11,7 +14,7 @@ class Database {
   }
 
   async connect(): Promise<void> {
-    if (process.env.NODE_ENV === "development") {
+    if (NODE_ENV === "development") {
       mongoose.set("debug", true);
       mongoose.set("debug", { color: true });
     }
@@ -21,7 +24,7 @@ class Database {
         maxPoolSize: MAX_POOL_SIZE,
       };
 
-      await mongoose.connect(process.env.MONGODB_URL!, connectOptions);
+      await mongoose.connect(MONGODB_URL, connectOptions);
       console.log("Database connected");
 
       DatabaseHelper.countConnections();
