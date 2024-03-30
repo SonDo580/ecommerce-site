@@ -1,5 +1,6 @@
 import { DataSizeUtil } from "@root/utils/data-size.util";
 import { MemoryUnit } from "@root/constants/unit.const";
+import { ErrorMessage } from "@root/constants/message.const";
 
 describe("Test Data Size Converter", () => {
   it("converts bytes to kilobytes", () => {
@@ -26,13 +27,13 @@ describe("Test Data Size Converter", () => {
     const convertWithInvalidUnit = () => {
       DataSizeUtil.convert(1, "invalidUnit" as MemoryUnit, MemoryUnit.KiB);
     };
-    expect(convertWithInvalidUnit).toThrow("Invalid memory unit");
+    expect(convertWithInvalidUnit).toThrow(ErrorMessage.INVALID_MEMORY_UNIT);
   });
 
   it("Invalid memory value", () => {
     const convertWithInvalidUnit = () => {
       DataSizeUtil.convert(-1, MemoryUnit.B, MemoryUnit.KiB);
     };
-    expect(convertWithInvalidUnit).toThrow("Negative memory value");
+    expect(convertWithInvalidUnit).toThrow(ErrorMessage.NEGATIVE_MEMORY_VALUE);
   });
 });
