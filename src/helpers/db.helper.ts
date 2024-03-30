@@ -4,7 +4,7 @@ import {
   CHECKING_INTERVAL,
   maxNumberOfConnections,
 } from "@root/constants/db.const";
-import { DataSizeConverter } from "@root/utils/converter.util";
+import { DataSizeUtil } from "@root/utils/data-size.util";
 import { MemoryUnit } from "@root/constants/unit.const";
 
 export class DatabaseHelper {
@@ -42,7 +42,7 @@ export class DatabaseHelper {
     const sourceMemoryUnit: MemoryUnit = MemoryUnit.B;
     const targetMemoryUnit: MemoryUnit = MemoryUnit.MiB;
 
-    const convertedMemoryUsed: number = DataSizeConverter.convert(
+    const convertedMemoryUsed: number = DataSizeUtil.convert(
       memoryUsed,
       sourceMemoryUnit,
       targetMemoryUnit
