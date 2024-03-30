@@ -7,14 +7,14 @@ export class DataSizeUtil {
       throw new Error(ErrorMessage.NEGATIVE_MEMORY_VALUE);
     }
 
-    const fromIndex = MEMORY_UNITS.indexOf(from);
-    const toIndex = MEMORY_UNITS.indexOf(to);
+    const fromIndex: number = MEMORY_UNITS.indexOf(from);
+    const toIndex: number = MEMORY_UNITS.indexOf(to);
 
     if (fromIndex === -1 || toIndex === -1) {
       throw new Error(ErrorMessage.INVALID_MEMORY_UNIT);
     }
 
-    const multiplier = 1024 ** (fromIndex - toIndex);
+    const multiplier: number = 1024 ** (fromIndex - toIndex);
     return value * multiplier;
   }
 }
