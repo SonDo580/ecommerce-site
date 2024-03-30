@@ -1,26 +1,37 @@
 import { DataSizeUtil } from "@root/utils/data-size.util";
-import { MemoryUnit } from "@root/constants/unit.const";
+import {
+  MEMORY_CONVERSION_FACTOR,
+  MemoryUnit,
+} from "@root/constants/unit.const";
 import { ErrorMessage } from "@root/constants/message.const";
 
 describe("Test Data Size Converter", () => {
   it("converts bytes to kilobytes", () => {
-    const result = DataSizeUtil.convert(1024, MemoryUnit.B, MemoryUnit.KiB);
+    const result = DataSizeUtil.convert(
+      MEMORY_CONVERSION_FACTOR,
+      MemoryUnit.B,
+      MemoryUnit.KiB
+    );
     expect(result).toBe(1);
   });
 
   it("converts kilobytes to bytes", () => {
     const result = DataSizeUtil.convert(1, MemoryUnit.KiB, MemoryUnit.B);
-    expect(result).toBe(1024);
+    expect(result).toBe(MEMORY_CONVERSION_FACTOR);
+  });
+
+  it("converts kilobytes to megabytes", () => {
+    const result = DataSizeUtil.convert(
+      MEMORY_CONVERSION_FACTOR,
+      MemoryUnit.KiB,
+      MemoryUnit.MiB
+    );
+    expect(result).toBe(1);
   });
 
   it("converts megabytes to kilobytes", () => {
     const result = DataSizeUtil.convert(1, MemoryUnit.MiB, MemoryUnit.KiB);
-    expect(result).toBe(1024);
-  });
-
-  it("converts kilobytes to megabytes", () => {
-    const result = DataSizeUtil.convert(1, MemoryUnit.MiB, MemoryUnit.KiB);
-    expect(result).toBe(1024);
+    expect(result).toBe(MEMORY_CONVERSION_FACTOR);
   });
 
   it("Invalid memory units", () => {

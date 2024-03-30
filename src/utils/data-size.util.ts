@@ -1,5 +1,9 @@
 import { ErrorMessage } from "@root/constants/message.const";
-import { MEMORY_UNITS, MemoryUnit } from "@root/constants/unit.const";
+import {
+  MEMORY_CONVERSION_FACTOR,
+  MEMORY_UNITS,
+  MemoryUnit,
+} from "@root/constants/unit.const";
 
 export class DataSizeUtil {
   static convert(value: number, from: MemoryUnit, to: MemoryUnit): number {
@@ -14,7 +18,9 @@ export class DataSizeUtil {
       throw new Error(ErrorMessage.INVALID_MEMORY_UNIT);
     }
 
-    const multiplier: number = 1024 ** (fromIndex - toIndex);
+    const multiplier: number =
+      MEMORY_CONVERSION_FACTOR ** (fromIndex - toIndex);
+
     return value * multiplier;
   }
 }
