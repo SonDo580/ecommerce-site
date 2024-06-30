@@ -1,6 +1,7 @@
 const MODEL_NAME = {
   SHOP: "Shop",
-  KEY: "Key",
+  KEY_TOKEN: "KeyToken",
+  API_KEY: "ApiKey"
 };
 
 enum Role {

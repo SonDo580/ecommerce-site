@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import crypto from "crypto";
 
-import { Shop } from "@root/models/shop.model";
+import { ShopModel } from "@root/models/shop.model";
 import { Role } from "@root/constants";
 import { AuthUtil } from "@root/utils/auth.util";
 import { TransformUtil } from "@root/utils/transform.util";
@@ -17,7 +17,7 @@ export class AccessService {
   static async signUp(payload: SignUpPayload) {
     const { name, email, password } = payload;
 
-    const existedShop = await Shop.findOne({ email }).lean();
+    const existedShop = await ShopModel.findOne({ email }).lean();
     if (existedShop) {
       return {
         code: "xxxx",
@@ -26,7 +26,7 @@ export class AccessService {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newShop = await Shop.create({
+    const newShop = await ShopModel.create({
       name,
       email,
       password: hashedPassword,

@@ -19,4 +19,4 @@ const keyTokenSchema = new Schema({
   timestamps: true
 });
 
-export const KeyToken = model(MODEL_NAME.KEY, keyTokenSchema);
+export const KeyTokenModel = model(MODEL_NAME.KEY_TOKEN, keyTokenSchema);

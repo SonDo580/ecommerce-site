@@ -36,4 +36,4 @@ const shopSchema = new Schema(
   }
 );
 
-export const Shop = model(MODEL_NAME.SHOP, shopSchema);
+export const ShopModel = model(MODEL_NAME.SHOP, shopSchema);
