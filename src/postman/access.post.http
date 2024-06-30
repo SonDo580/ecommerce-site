@@ -1,0 +1,11 @@
+@url_dev=http://localhost:5000/v1/api
+
+### signup
+POST {{url_dev}}/shop/sign-up
+Content-Type: application/json
+
+{
+    "name": "Mega Robot",
+    "email": "megarobot5@x.com",
+    "password": "abc123"
+}

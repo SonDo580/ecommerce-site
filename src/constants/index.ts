@@ -10,9 +10,14 @@ enum Role {
   ADMIN = "ADMIN",
 }
 
+enum ShopStatus {
+  ACTIVE = 'active',
+  INACTIVE = 'inactive'
+}
+
 enum NodeEnv {
   DEVELOPMENT = "development",
   PRODUCTION = "production",
 }
 
-export { MODEL_NAME, Role, NodeEnv };
+export { MODEL_NAME, Role, NodeEnv, ShopStatus };

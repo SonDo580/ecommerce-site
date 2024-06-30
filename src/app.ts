@@ -4,6 +4,7 @@ import helmet from "helmet";
 import compression from "compression";
 
 import "./dbs/db.init";
+import router from "./routes";
 
 const app = express();
 
@@ -11,16 +12,11 @@ const app = express();
 app.use(morgan("dev"));
 app.use(helmet());
 app.use(compression());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Routers
-app.get("/", (req, res, next) => {
-  const str = "Hello Son";
-
-  res.json({
-    message: "Welcome",
-    metadata: str.repeat(10000),
-  });
-});
+app.use("/", router);
 
 // Handle error
 
