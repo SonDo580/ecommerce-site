@@ -1,4 +1,3 @@
-import bcrypt from "bcrypt";
 import crypto from "crypto";
 
 import { ShopModel } from "@root/models/shop.model";
@@ -8,27 +7,23 @@ import { TransformUtil } from "@root/utils/transform.util";
 import { KeyTokenService } from "./key-token.service";
 import { ErrorMessage } from "@root/constants/message.const";
 import { ConflictError } from "@root/core/error.response";
-
-interface SignUpPayload {
-  name: string;
-  email: string;
-  password: string;
-}
+import { SignUpPayload } from "@root/interfaces/requests/sign-up.request";
+import { ShopService } from "./shop.service";
+import { SignUpResult } from "@root/interfaces/responses/sign-up.response";
 
 export class AccessService {
-  static async signUp(payload: SignUpPayload) {
+  static async signUp(payload: SignUpPayload): Promise<SignUpResult> {
     const { name, email, password } = payload;
 
-    const existedShop = await ShopModel.findOne({ email }).lean();
+    const existedShop = await ShopService.findByEmail(email);
     if (existedShop) {
       throw new ConflictError(ErrorMessage.EMAIL_REGISTERED);
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newShop = await ShopModel.create({
+    const newShop = await ShopService.create({
       name,
       email,
-      password: hashedPassword,
+      password,
       roles: [Role.SHOP],
     });
 
@@ -55,7 +50,11 @@ export class AccessService {
     );
 
     return {
-      shop: TransformUtil.extractFields(newShop, ["_id", "name", "email"]),
+      shop: TransformUtil.extractFields(newShop.toObject(), [
+        "_id",
+        "name",
+        "email",
+      ]),
       tokens,
     };
   }
