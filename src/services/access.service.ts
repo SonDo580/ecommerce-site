@@ -55,11 +55,8 @@ export class AccessService {
     );
 
     return {
-      code: 201,
-      metadata: {
-        shop: TransformUtil.extractFields(newShop, ["_id", "name", "email"]),
-        tokens,
-      },
+      shop: TransformUtil.extractFields(newShop, ["_id", "name", "email"]),
+      tokens,
     };
   }
 }
