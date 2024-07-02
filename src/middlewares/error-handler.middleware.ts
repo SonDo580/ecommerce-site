@@ -20,7 +20,6 @@ const errorHandler = (
     GENERAL_CONFIG.NODE_ENV === NodeEnv.DEVELOPMENT ? err.stack : undefined;
 
   res.status(statusCode).json({
-    code: statusCode,
     message,
     stack,
   });
