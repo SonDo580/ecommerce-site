@@ -1,7 +1,8 @@
 import { Router } from "express";
 import { AccessController } from "@root/controllers/access.controller";
+import { asyncHandler } from "@root/middlewares/error-handler.middleware";
 
 const accessRouter = Router();
-accessRouter.post("/shop/sign-up", AccessController.signUp);
+accessRouter.post("/shop/sign-up", asyncHandler(AccessController.signUp));
 
 export { accessRouter };

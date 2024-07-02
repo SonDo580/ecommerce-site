@@ -3,6 +3,7 @@
 ### signup
 POST {{url_dev}}/shop/sign-up
 Content-Type: application/json
+x-api-key: 91941700,2244217194,3755939250,3230776939,1365656344,3160948028,2119888273,2210465485,899136037,2373193109
 
 {
     "name": "Mega Robot",

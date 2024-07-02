@@ -5,6 +5,10 @@ import compression from "compression";
 
 import "./dbs/db.init";
 import router from "./routes";
+import {
+  errorHandler,
+} from "./middlewares/error-handler.middleware";
+import { NotFoundError } from "./core/error.response";
 
 const app = express();
 
@@ -19,5 +23,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/", router);
 
 // Handle error
+app.use((req, res, next) => {
+  throw new NotFoundError();
+});
+app.use(errorHandler);
 
 export { app };

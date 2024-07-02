@@ -6,6 +6,8 @@ import { Role } from "@root/constants";
 import { AuthUtil } from "@root/utils/auth.util";
 import { TransformUtil } from "@root/utils/transform.util";
 import { KeyTokenService } from "./key-token.service";
+import { ErrorMessage } from "@root/constants/message.const";
+import { ConflictError } from "@root/core/error.response";
 
 interface SignUpPayload {
   name: string;
@@ -19,10 +21,7 @@ export class AccessService {
 
     const existedShop = await ShopModel.findOne({ email }).lean();
     if (existedShop) {
-      return {
-        code: "xxxx",
-        message: "Shop already registered!",
-      };
+      throw new ConflictError(ErrorMessage.EMAIL_REGISTERED);
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
