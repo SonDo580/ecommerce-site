@@ -1,13 +1,25 @@
 import { KeyTokenModel } from "@root/models/key-token.model";
 
 export class KeyTokenService {
-  static async createKeyToken(
+  static async upsertKeyToken(
     shopId: string,
-    publicKey: string
-  ): Promise<void> {
-    await KeyTokenModel.create({
-      shop: shopId,
-      publicKey,
-    });
+    publicKey: string,
+    refreshToken: string
+  ) {
+    const existingRecord = await KeyTokenModel.findOne({ shop: shopId });
+
+    if (!existingRecord) {
+      await KeyTokenModel.create({
+        shop: shopId,
+        publicKey,
+        refreshToken,
+      });
+      return;
+    }
+
+    existingRecord.usedRefreshTokens.push(existingRecord.refreshToken);
+    existingRecord.publicKey = publicKey;
+    existingRecord.refreshToken = refreshToken;
+    await existingRecord.save();
   }
 }
