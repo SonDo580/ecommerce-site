@@ -22,4 +22,12 @@ export class KeyTokenService {
     existingRecord.refreshToken = refreshToken;
     await existingRecord.save();
   }
+
+  static async findByShopId(shopId: string) {
+    return await KeyTokenModel.findOne({ shop: shopId }).lean();
+  }
+
+  static async removeById(id: string) {
+    return await KeyTokenModel.deleteOne({_id: id});
+  }
 }

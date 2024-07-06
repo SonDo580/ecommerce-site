@@ -90,4 +90,8 @@ export class AccessService {
       tokens,
     };
   }
+
+  static async logout(keyToken: any) {
+    return await KeyTokenService.removeById(keyToken._id);
+  }
 }

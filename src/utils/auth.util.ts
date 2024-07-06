@@ -1,12 +1,17 @@
-import jwt from "jsonwebtoken";
+import jwt, { Secret } from "jsonwebtoken";
 import crypto from "crypto";
 import { promisify } from "util";
 
-const generateKeyPairAsync = promisify(crypto.generateKeyPair);
-
 import { GENERAL_CONFIG } from "@root/configs/general.config";
+import { ErrorMessage } from "@root/constants/message.const";
+import { BadRequestError } from "@root/core/error.response";
 
 const { ACCESS_EXPIRES_IN, REFRESH_EXPIRES_IN } = GENERAL_CONFIG;
+
+const generateKeyPairAsync = promisify(crypto.generateKeyPair);
+const verifyTokenAsync = promisify<string, Secret>(jwt.verify);
+
+type ErrorConstructor = new (message: string) => Error;
 
 export class AuthUtil {
   static async createAsymmetricKeyPair() {
@@ -40,5 +45,18 @@ export class AuthUtil {
     });
 
     return { accessToken, refreshToken };
+  }
+
+  static async verifyToken(
+    token: string,
+    key: Secret,
+    errorConstructor: ErrorConstructor = BadRequestError,
+    message: string = ErrorMessage.INVALID_TOKEN
+  ): Promise<any> {
+    try {
+      return await verifyTokenAsync(token, key);
+    } catch (err) {
+      throw new errorConstructor(message);
+    }
   }
 }
