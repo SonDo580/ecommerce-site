@@ -27,7 +27,21 @@ export class KeyTokenService {
     return await KeyTokenModel.findOne({ shop: shopId }).lean();
   }
 
-  static async removeById(id: string) {
-    return await KeyTokenModel.deleteOne({_id: id});
+  static async findInUsedRefreshTokens(refreshToken: string) {
+    return await KeyTokenModel.findOne({
+      usedRefreshTokens: refreshToken,
+    }).lean();
+  }
+
+  static async findByRefreshToken(refreshToken: string) {
+    return await KeyTokenModel.findOne({ refreshToken }).lean();
+  }
+
+  static async deleteById(id: string) {
+    return await KeyTokenModel.deleteOne({ _id: id });
+  }
+
+  static async deleteByShopId(shopId: string) {
+    return await KeyTokenModel.findOneAndDelete({ shop: shopId });
   }
 }

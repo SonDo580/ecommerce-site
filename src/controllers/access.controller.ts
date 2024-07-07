@@ -19,4 +19,11 @@ export class AccessController {
     const result = await AccessService.logout(req.keyToken);
     new SuccessResponse(result).send(res);
   }
+
+  static async handleRefreshToken(req: CustomRequest, res: Response) {
+    const result = await AccessService.handleRefreshToken(
+      req.body.refreshToken
+    );
+    new SuccessResponse(result).send(res);
+  }
 }

@@ -8,6 +8,7 @@ import { ErrorMessage } from "@root/constants/message.const";
 import {
   BadRequestError,
   ConflictError,
+  ForbiddenError,
   UnauthorizedError,
 } from "@root/core/error.response";
 import { SignUpPayload } from "@root/interfaces/requests/sign-up.request";
@@ -92,6 +93,58 @@ export class AccessService {
   }
 
   static async logout(keyToken: any) {
-    return await KeyTokenService.removeById(keyToken._id);
+    return await KeyTokenService.deleteById(keyToken._id);
+  }
+
+  static async handleRefreshToken(refreshToken: string) {
+    const keyToken = await KeyTokenService.findInUsedRefreshTokens(
+      refreshToken
+    );
+
+    if (keyToken) {
+      const { shopId } = await AuthUtil.verifyToken(
+        refreshToken,
+        keyToken.publicKey
+      );
+
+      await KeyTokenService.deleteByShopId(shopId);
+      throw new ForbiddenError(ErrorMessage.NEED_LOGIN_AGAIN);
+    }
+
+    const ownKeyToken = await KeyTokenService.findByRefreshToken(refreshToken);
+    if (!ownKeyToken) {
+      throw new UnauthorizedError(ErrorMessage.SHOP_NOT_REGISTERED);
+    }
+
+    const { email } = await AuthUtil.verifyToken(
+      refreshToken,
+      ownKeyToken.publicKey
+    );
+
+    const shop = await ShopService.findByEmail(email);
+    if (!shop) {
+      throw new UnauthorizedError(ErrorMessage.SHOP_NOT_REGISTERED);
+    }
+
+    const { privateKey, publicKey } = await AuthUtil.createAsymmetricKeyPair();
+
+    const tokens = await AuthUtil.createTokenPair(
+      {
+        shopId: shop._id,
+        email,
+      },
+      privateKey
+    );
+
+    await KeyTokenService.upsertKeyToken(
+      shop._id.toString(),
+      publicKey,
+      tokens.refreshToken
+    );
+
+    return {
+      shop: TransformUtil.extractFields(shop, ["_id", "name", "email"]),
+      tokens,
+    };
   }
 }

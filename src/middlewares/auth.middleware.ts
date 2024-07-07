@@ -58,9 +58,7 @@ const checkAuthentication = asyncHandler(
       throw new NotFoundError(ErrorMessage.KEY_NOT_FOUND);
     }
 
-    const accessToken = (req.headers[HEADERS.AUTHORIZATION] as string)?.split(
-      " "
-    )[1];
+    const accessToken = req.headers[HEADERS.AUTHORIZATION] as string
     if (!accessToken) {
       throw new UnauthorizedError();
     }
