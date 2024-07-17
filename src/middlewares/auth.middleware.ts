@@ -12,15 +12,16 @@ import { KeyTokenService } from "@root/services/key-token.service";
 import { ErrorMessage } from "@root/constants/message.const";
 import { AuthUtil } from "@root/utils/auth.util";
 
-const HEADERS = {
-  API_KEY: "x-api-key",
-  CLIENT_ID: "x-client-id",
-  AUTHORIZATION: "authorization",
-};
+export enum Headers {
+  API_KEY = "x-api-key",
+  CLIENT_ID = "x-client-id",
+  AUTHORIZATION = "authorization",
+  REFRESH_TOKEN = "refresh-token",
+}
 
-const checkApiKey = asyncHandler(
+export const checkApiKey = asyncHandler(
   async (req: CustomRequest, res: Response, next: NextFunction) => {
-    const key = req.headers[HEADERS.API_KEY]?.toString();
+    const key = req.headers[Headers.API_KEY]?.toString();
     if (!key) {
       throw new UnauthorizedError();
     }
@@ -35,7 +36,7 @@ const checkApiKey = asyncHandler(
   }
 );
 
-const checkPermission = (permission: string) =>
+export const checkPermission = (permission: string) =>
   asyncHandler(
     async (req: CustomRequest, res: Response, next: NextFunction) => {
       const permissions = req.apiKey?.permissions;
@@ -46,19 +47,33 @@ const checkPermission = (permission: string) =>
     }
   );
 
-const checkAuthentication = asyncHandler(
+export const checkAuthentication = asyncHandler(
   async (req: CustomRequest, res: Response, next: NextFunction) => {
-    const clientId = req.headers[HEADERS.CLIENT_ID];
+    const clientId = req.headers[Headers.CLIENT_ID] as string;
     if (!clientId) {
       throw new UnauthorizedError();
     }
 
-    const keyToken = await KeyTokenService.findByShopId(clientId as string);
-    if (!keyToken) {
-      throw new NotFoundError(ErrorMessage.KEY_NOT_FOUND);
+    const refreshToken = req.headers[Headers.REFRESH_TOKEN] as string;
+    if (!refreshToken) {
+      throw new UnauthorizedError();
     }
 
-    const accessToken = req.headers[HEADERS.AUTHORIZATION] as string
+    const keyToken = await KeyTokenService.findByShopId(clientId);
+    if (!keyToken) {
+      throw new NotFoundError(ErrorMessage.SHOP_NOT_REGISTERED);
+    }
+
+    // keyToken2 can be the same keyToken
+    const keyToken2 = await KeyTokenService.findInUsedRefreshTokens(
+      refreshToken
+    );
+    if (keyToken2) {
+      await KeyTokenService.deleteByShopId(keyToken2.shop.toString());
+      throw new ForbiddenError(ErrorMessage.NEED_LOGIN_AGAIN);
+    }
+
+    const accessToken = req.headers[Headers.AUTHORIZATION] as string;
     if (!accessToken) {
       throw new UnauthorizedError();
     }
@@ -68,7 +83,6 @@ const checkAuthentication = asyncHandler(
       keyToken.publicKey,
       UnauthorizedError
     );
-
     if (decoded.shopId !== clientId) {
       throw new UnauthorizedError();
     }
@@ -77,5 +91,3 @@ const checkAuthentication = asyncHandler(
     next();
   }
 );
-
-export { checkApiKey, checkPermission, checkAuthentication };

@@ -8,7 +8,7 @@ import { ErrorMessage } from "@root/constants/message.const";
 import {
   BadRequestError,
   ConflictError,
-  ForbiddenError,
+  NotFoundError,
   UnauthorizedError,
 } from "@root/core/error.response";
 import { SignUpPayload } from "@root/interfaces/requests/sign-up.request";
@@ -96,34 +96,15 @@ export class AccessService {
     return await KeyTokenService.deleteById(keyToken._id);
   }
 
-  static async handleRefreshToken(refreshToken: string) {
-    const keyToken = await KeyTokenService.findInUsedRefreshTokens(
-      refreshToken
-    );
-
-    if (keyToken) {
-      const { shopId } = await AuthUtil.verifyToken(
-        refreshToken,
-        keyToken.publicKey
-      );
-
-      await KeyTokenService.deleteByShopId(shopId);
-      throw new ForbiddenError(ErrorMessage.NEED_LOGIN_AGAIN);
-    }
-
-    const ownKeyToken = await KeyTokenService.findByRefreshToken(refreshToken);
-    if (!ownKeyToken) {
-      throw new UnauthorizedError(ErrorMessage.SHOP_NOT_REGISTERED);
-    }
-
+  static async handleRefreshToken(keyToken: any, refreshToken: string) {
     const { email } = await AuthUtil.verifyToken(
       refreshToken,
-      ownKeyToken.publicKey
+      keyToken.publicKey
     );
 
     const shop = await ShopService.findByEmail(email);
     if (!shop) {
-      throw new UnauthorizedError(ErrorMessage.SHOP_NOT_REGISTERED);
+      throw new NotFoundError(ErrorMessage.SHOP_NOT_REGISTERED);
     }
 
     const { privateKey, publicKey } = await AuthUtil.createAsymmetricKeyPair();

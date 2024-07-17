@@ -26,7 +26,7 @@ const errorHandler = (
 };
 
 const asyncHandler =
-  (fn: RequestHandler) =>
+  (fn: RequestHandler): RequestHandler =>
   async (req: CustomRequest, res: Response, next: NextFunction) => {
     Promise.resolve(fn(req, res, next)).catch(next);
   };

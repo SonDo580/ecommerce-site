@@ -3,6 +3,7 @@ import { Response } from "express";
 import { AccessService } from "@root/services/access.service";
 import { CreatedResponse, SuccessResponse } from "@root/core/success.response";
 import { CustomRequest } from "@root/types";
+import { Headers } from "@root/middlewares/auth.middleware";
 
 export class AccessController {
   static async signUp(req: CustomRequest, res: Response) {
@@ -22,7 +23,8 @@ export class AccessController {
 
   static async handleRefreshToken(req: CustomRequest, res: Response) {
     const result = await AccessService.handleRefreshToken(
-      req.body.refreshToken
+      req.keyToken,
+      req.headers[Headers.REFRESH_TOKEN] as string
     );
     new SuccessResponse(result).send(res);
   }

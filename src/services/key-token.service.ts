@@ -42,6 +42,6 @@ export class KeyTokenService {
   }
 
   static async deleteByShopId(shopId: string) {
-    return await KeyTokenModel.findOneAndDelete({ shop: shopId });
+    return await KeyTokenModel.deleteOne({ shop: shopId });
   }
 }
