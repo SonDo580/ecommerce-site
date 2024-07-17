@@ -2,11 +2,7 @@ import { NextFunction, Response } from "express";
 
 import { ApiKeyService } from "@root/services/api-key.service";
 import { CustomRequest } from "@root/types";
-import {
-  ForbiddenError,
-  NotFoundError,
-  UnauthorizedError,
-} from "@root/core/error.response";
+import { ForbiddenError, UnauthorizedError } from "@root/core/error.response";
 import { asyncHandler } from "./error-handler.middleware";
 import { KeyTokenService } from "@root/services/key-token.service";
 import { ErrorMessage } from "@root/constants/message.const";
@@ -55,7 +51,7 @@ export const checkAuthentication = asyncHandler(
 
     const keyToken = await KeyTokenService.findByShopId(clientId);
     if (!keyToken) {
-      throw new NotFoundError(ErrorMessage.SHOP_NOT_REGISTERED);
+      throw new UnauthorizedError(ErrorMessage.KEY_NOT_FOUND);
     }
 
     // keyToken2 can be the same keyToken
