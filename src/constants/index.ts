@@ -1,24 +1,29 @@
-const MODEL_NAME = {
+export const MODEL_NAME = {
   SHOP: "Shop",
   KEY_TOKEN: "KeyToken",
-  API_KEY: "ApiKey"
+  API_KEY: "ApiKey",
 };
 
-enum Role {
+export enum Role {
   SHOP = "SHOP",
   WRITER = "WRITER",
   EDITOR = "EDITOR",
   ADMIN = "ADMIN",
 }
 
-enum ShopStatus {
-  ACTIVE = 'active',
-  INACTIVE = 'inactive'
+export enum ShopStatus {
+  ACTIVE = "active",
+  INACTIVE = "inactive",
 }
 
-enum NodeEnv {
+export enum NodeEnv {
   DEVELOPMENT = "development",
   PRODUCTION = "production",
 }
 
-export { MODEL_NAME, Role, NodeEnv, ShopStatus };
+export enum Headers {
+  API_KEY = "x-api-key",
+  CLIENT_ID = "x-client-id",
+  AUTHORIZATION = "authorization",
+  REFRESH_TOKEN = "refresh-token",
+}

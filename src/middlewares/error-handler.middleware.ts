@@ -7,7 +7,7 @@ import { ErrorMessage } from "@root/constants/message.const";
 import { GENERAL_CONFIG } from "@root/configs/general.config";
 import { NodeEnv } from "@root/constants";
 
-const errorHandler = (
+export const errorHandler = (
   err: Error,
   req: CustomRequest,
   res: Response,
@@ -25,10 +25,8 @@ const errorHandler = (
   });
 };
 
-const asyncHandler =
+export const asyncHandler =
   (fn: RequestHandler): RequestHandler =>
   async (req: CustomRequest, res: Response, next: NextFunction) => {
     Promise.resolve(fn(req, res, next)).catch(next);
   };
-
-export { errorHandler, asyncHandler };

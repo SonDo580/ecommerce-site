@@ -3,7 +3,7 @@ import { Response } from "express";
 import { AccessService } from "@root/services/access.service";
 import { CreatedResponse, SuccessResponse } from "@root/core/success.response";
 import { CustomRequest } from "@root/types";
-import { Headers } from "@root/middlewares/auth.middleware";
+import { Headers } from "@root/constants";
 
 export class AccessController {
   static async signUp(req: CustomRequest, res: Response) {

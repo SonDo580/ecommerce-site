@@ -1,6 +1,6 @@
-const MEMORY_CONVERSION_FACTOR = 1024;
+export const MEMORY_CONVERSION_FACTOR = 1024;
 
-enum MemoryUnit {
+export enum MemoryUnit {
   B = "B",
   KiB = "KiB",
   MiB = "MiB",
@@ -12,7 +12,7 @@ enum MemoryUnit {
   YiB = "YiB",
 }
 
-const MEMORY_UNITS: MemoryUnit[] = [
+export const MEMORY_UNITS: MemoryUnit[] = [
   MemoryUnit.B,
   MemoryUnit.KiB,
   MemoryUnit.MiB,
@@ -23,5 +23,3 @@ const MEMORY_UNITS: MemoryUnit[] = [
   MemoryUnit.ZiB,
   MemoryUnit.YiB,
 ];
-
-export { MemoryUnit, MEMORY_UNITS, MEMORY_CONVERSION_FACTOR };

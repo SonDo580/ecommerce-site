@@ -11,13 +11,7 @@ import { asyncHandler } from "./error-handler.middleware";
 import { KeyTokenService } from "@root/services/key-token.service";
 import { ErrorMessage } from "@root/constants/message.const";
 import { AuthUtil } from "@root/utils/auth.util";
-
-export enum Headers {
-  API_KEY = "x-api-key",
-  CLIENT_ID = "x-client-id",
-  AUTHORIZATION = "authorization",
-  REFRESH_TOKEN = "refresh-token",
-}
+import { Headers } from "@root/constants";
 
 export const checkApiKey = asyncHandler(
   async (req: CustomRequest, res: Response, next: NextFunction) => {
