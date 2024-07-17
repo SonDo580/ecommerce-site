@@ -11,16 +11,20 @@ import {
   NotFoundError,
   UnauthorizedError,
 } from "@root/core/error.response";
-import { SignUpPayload } from "@root/interfaces/requests/sign-up.request";
+import { SignUpRequest } from "@root/interfaces/requests/sign-up.request";
 import { ShopService } from "./shop.service";
-import { SignUpResult } from "@root/interfaces/responses/sign-up.response";
+import { SignUpResponse } from "@root/interfaces/responses/sign-up.response";
+import { IKeyToken } from "@root/models/key-token.model";
+import { LoginRequest } from "@root/interfaces/requests/login.request";
+import { LoginResponse } from "@root/interfaces/responses/login.response";
+import { RefreshTokenResponse } from "@root/interfaces/responses/refresh-token.response";
 
 export class AccessService {
   static async signUp({
     name,
     email,
     password,
-  }: SignUpPayload): Promise<SignUpResult> {
+  }: SignUpRequest): Promise<SignUpResponse> {
     const existedShop = await ShopService.findByEmail(email);
     if (existedShop) {
       throw new ConflictError(ErrorMessage.EMAIL_REGISTERED);
@@ -37,7 +41,7 @@ export class AccessService {
 
     const tokens = await AuthUtil.createTokenPair(
       {
-        shopId: newShop._id,
+        shopId: newShop._id.toString(),
         email,
       },
       privateKey
@@ -59,7 +63,10 @@ export class AccessService {
     };
   }
 
-  static async login({ email, password }: any) {
+  static async login({
+    email,
+    password,
+  }: LoginRequest): Promise<LoginResponse> {
     const shop = await ShopService.findByEmail(email);
     if (!shop) {
       throw new BadRequestError(ErrorMessage.SHOP_NOT_FOUND);
@@ -74,7 +81,7 @@ export class AccessService {
 
     const tokens = await AuthUtil.createTokenPair(
       {
-        shopId: shop._id,
+        shopId: shop._id.toString(),
         email,
       },
       privateKey
@@ -92,11 +99,14 @@ export class AccessService {
     };
   }
 
-  static async logout(keyToken: any) {
-    return await KeyTokenService.deleteById(keyToken._id);
+  static async logout(keyToken: IKeyToken) {
+    return await KeyTokenService.deleteById(keyToken._id.toString());
   }
 
-  static async handleRefreshToken(keyToken: any, refreshToken: string) {
+  static async handleRefreshToken(
+    keyToken: IKeyToken,
+    refreshToken: string
+  ): Promise<RefreshTokenResponse> {
     const { email } = await AuthUtil.verifyToken(
       refreshToken,
       keyToken.publicKey
@@ -111,7 +121,7 @@ export class AccessService {
 
     const tokens = await AuthUtil.createTokenPair(
       {
-        shopId: shop._id,
+        shopId: shop._id.toString(),
         email,
       },
       privateKey

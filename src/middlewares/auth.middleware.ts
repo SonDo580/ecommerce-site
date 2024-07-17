@@ -1,27 +1,28 @@
 import { NextFunction, Response } from "express";
 
 import { ApiKeyService } from "@root/services/api-key.service";
-import { CustomRequest } from "@root/types";
+import { CustomRequest } from "@root/interfaces/custom-request.interface";
 import { ForbiddenError, UnauthorizedError } from "@root/core/error.response";
 import { asyncHandler } from "./error-handler.middleware";
 import { KeyTokenService } from "@root/services/key-token.service";
 import { ErrorMessage } from "@root/constants/message.const";
 import { AuthUtil } from "@root/utils/auth.util";
 import { Headers } from "@root/constants";
+import { AuthTokenPayload } from "@root/interfaces/payloads/auth-token.payload";
 
 export const checkApiKey = asyncHandler(
   async (req: CustomRequest, res: Response, next: NextFunction) => {
-    const key = req.headers[Headers.API_KEY]?.toString();
-    if (!key) {
+    const apiKey = req.headers[Headers.API_KEY] as string;
+    if (!apiKey) {
       throw new UnauthorizedError();
     }
 
-    const keyObj = await ApiKeyService.findKey(key);
-    if (!keyObj) {
+    const apiKeyObj = await ApiKeyService.findKey(apiKey);
+    if (!apiKeyObj) {
       throw new UnauthorizedError();
     }
 
-    req.apiKey = keyObj;
+    req.apiKey = apiKeyObj;
     next();
   }
 );
@@ -29,7 +30,7 @@ export const checkApiKey = asyncHandler(
 export const checkPermission = (permission: string) =>
   asyncHandler(
     async (req: CustomRequest, res: Response, next: NextFunction) => {
-      const permissions = req.apiKey?.permissions;
+      const permissions = req.apiKey!.permissions;
       if (!permissions || !permissions.includes(permission)) {
         throw new ForbiddenError();
       }
@@ -68,11 +69,12 @@ export const checkAuthentication = asyncHandler(
       throw new UnauthorizedError();
     }
 
-    const decoded = await AuthUtil.verifyToken(
+    const decoded = (await AuthUtil.verifyToken(
       accessToken as string,
       keyToken.publicKey,
       UnauthorizedError
-    );
+    )) as AuthTokenPayload;
+
     if (decoded.shopId !== clientId) {
       throw new UnauthorizedError();
     }

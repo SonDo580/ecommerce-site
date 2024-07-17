@@ -1,5 +1,7 @@
+import { ObjectId } from "mongoose";
+
 interface Shop {
-  _id: string;
+  _id: string | ObjectId;
   name: string;
   email: string;
 }
@@ -9,7 +11,7 @@ interface Tokens {
   refreshToken: string;
 }
 
-export interface SignUpResponse {
+export interface RefreshTokenResponse {
   shop: Shop;
   tokens: Tokens;
 }

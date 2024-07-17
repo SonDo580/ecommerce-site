@@ -2,7 +2,7 @@ import { Response } from "express";
 
 import { AccessService } from "@root/services/access.service";
 import { CreatedResponse, SuccessResponse } from "@root/core/success.response";
-import { CustomRequest } from "@root/types";
+import { CustomRequest } from "@root/interfaces/custom-request.interface";
 import { Headers } from "@root/constants";
 
 export class AccessController {

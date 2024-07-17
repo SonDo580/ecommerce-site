@@ -1,7 +1,7 @@
 import { NextFunction, RequestHandler, Response } from "express";
 import httpStatus from "http-status";
 
-import { CustomRequest } from "@root/types";
+import { CustomRequest } from "@root/interfaces/custom-request.interface";
 import { HttpError } from "@root/core/error.response";
 import { ErrorMessage } from "@root/constants/message.const";
 import { GENERAL_CONFIG } from "@root/configs/general.config";

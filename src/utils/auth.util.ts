@@ -5,6 +5,7 @@ import { promisify } from "util";
 import { GENERAL_CONFIG } from "@root/configs/general.config";
 import { ErrorMessage } from "@root/constants/message.const";
 import { BadRequestError } from "@root/core/error.response";
+import { AuthTokenPayload } from "@root/interfaces/payloads/auth-token.payload";
 
 const { ACCESS_EXPIRES_IN, REFRESH_EXPIRES_IN } = GENERAL_CONFIG;
 
@@ -14,7 +15,10 @@ const verifyTokenAsync = promisify<string, Secret>(jwt.verify);
 type ErrorConstructor = new (message: string) => Error;
 
 export class AuthUtil {
-  static async createAsymmetricKeyPair() {
+  static async createAsymmetricKeyPair(): Promise<{
+    privateKey: string;
+    publicKey: string;
+  }> {
     const { privateKey, publicKey } = await generateKeyPairAsync("rsa", {
       modulusLength: 4096,
       publicKeyEncoding: {
@@ -31,9 +35,12 @@ export class AuthUtil {
   }
 
   static async createTokenPair(
-    payload: string | object | Buffer,
+    payload: AuthTokenPayload,
     privateKey: string
-  ) {
+  ): Promise<{
+    accessToken: string;
+    refreshToken: string;
+  }> {
     const accessToken = jwt.sign(payload, privateKey, {
       algorithm: "RS256",
       expiresIn: ACCESS_EXPIRES_IN,

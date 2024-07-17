@@ -1,7 +1,17 @@
-import { Schema, model } from "mongoose";
+import { Document, ObjectId, Schema, model } from "mongoose";
 import { MODEL_NAME } from "@root/constants";
+import { IBaseEntity } from "@root/interfaces/base-entity.interface";
 
-const keyTokenSchema = new Schema(
+export interface IKeyToken extends IBaseEntity {
+  shop: ObjectId;
+  publicKey: string;
+  refreshToken: string;
+  usedRefreshTokens: string[];
+}
+
+export interface IKeyTokenDocument extends Omit<IKeyToken, "_id">, Document {}
+
+const keyTokenSchema = new Schema<IKeyTokenDocument>(
   {
     shop: {
       type: Schema.Types.ObjectId,
@@ -17,7 +27,7 @@ const keyTokenSchema = new Schema(
       required: true,
     },
     usedRefreshTokens: {
-      type: Array,
+      type: [String],
       default: [],
     },
   },
@@ -26,4 +36,7 @@ const keyTokenSchema = new Schema(
   }
 );
 
-export const KeyTokenModel = model(MODEL_NAME.KEY_TOKEN, keyTokenSchema);
+export const KeyTokenModel = model<IKeyTokenDocument>(
+  MODEL_NAME.KEY_TOKEN,
+  keyTokenSchema
+);

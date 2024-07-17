@@ -1,7 +1,16 @@
-import { Schema, model } from "mongoose";
+import { Document, Schema, model } from "mongoose";
 import { MODEL_NAME } from "@root/constants";
+import { IBaseEntity } from "@root/interfaces/base-entity.interface";
 
-const apiKeySchema = new Schema(
+export interface IApiKey extends IBaseEntity {
+  key: string;
+  status: boolean;
+  permissions: string[];
+}
+
+export interface IApiKeyDocument extends Omit<IApiKey, "_id">, Document {}
+
+const apiKeySchema = new Schema<IApiKeyDocument>(
   {
     key: {
       type: String,
@@ -23,12 +32,7 @@ const apiKeySchema = new Schema(
   }
 );
 
-export const ApiKeyModel = model(MODEL_NAME.API_KEY, apiKeySchema);
-
-export interface IApiKey {
-  key: string;
-  status: boolean;
-  permissions: string[];
-  createdAt?: Date;
-  updatedAt?: Date;
-}
+export const ApiKeyModel = model<IApiKeyDocument>(
+  MODEL_NAME.API_KEY,
+  apiKeySchema
+);

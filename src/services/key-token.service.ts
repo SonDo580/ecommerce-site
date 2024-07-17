@@ -1,11 +1,11 @@
-import { KeyTokenModel } from "@root/models/key-token.model";
+import { IKeyToken, KeyTokenModel } from "@root/models/key-token.model";
 
 export class KeyTokenService {
   static async upsertKeyToken(
     shopId: string,
     publicKey: string,
     refreshToken: string
-  ) {
+  ): Promise<void> {
     const existingRecord = await KeyTokenModel.findOne({ shop: shopId });
 
     if (!existingRecord) {
@@ -23,17 +23,21 @@ export class KeyTokenService {
     await existingRecord.save();
   }
 
-  static async findByShopId(shopId: string) {
+  static async findByShopId(shopId: string): Promise<IKeyToken | null> {
     return await KeyTokenModel.findOne({ shop: shopId }).lean();
   }
 
-  static async findInUsedRefreshTokens(refreshToken: string) {
+  static async findInUsedRefreshTokens(
+    refreshToken: string
+  ): Promise<IKeyToken | null> {
     return await KeyTokenModel.findOne({
       usedRefreshTokens: refreshToken,
     }).lean();
   }
 
-  static async findByRefreshToken(refreshToken: string) {
+  static async findByRefreshToken(
+    refreshToken: string
+  ): Promise<IKeyToken | null> {
     return await KeyTokenModel.findOne({ refreshToken }).lean();
   }
 

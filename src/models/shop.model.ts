@@ -1,17 +1,31 @@
-import { Schema, model } from "mongoose";
-import { MODEL_NAME, ShopStatus } from "@root/constants";
+import { Document, Schema, model } from "mongoose";
+import { MODEL_NAME, Role, ShopStatus } from "@root/constants";
+import { IBaseEntity } from "@root/interfaces/base-entity.interface";
 
-const shopSchema = new Schema(
+export interface IShop extends IBaseEntity {
+  name: string;
+  email: string;
+  password: string;
+  status: string;
+  verify: boolean;
+  roles: Role[];
+}
+
+export interface IShopDocument extends Omit<IShop, "_id">, Document {}
+
+const shopSchema = new Schema<IShopDocument>(
   {
     name: {
       type: String,
       trim: true,
       maxLength: 150,
+      required: true,
     },
     email: {
       type: String,
       unique: true,
       trim: true,
+      required: true,
     },
     password: {
       type: String,
@@ -27,7 +41,12 @@ const shopSchema = new Schema(
       default: false,
     },
     roles: {
-      type: Array,
+      type: [
+        {
+          type: String,
+          enum: Object.values(Role),
+        },
+      ],
       default: [],
     },
   },
@@ -36,4 +55,4 @@ const shopSchema = new Schema(
   }
 );
 
-export const ShopModel = model(MODEL_NAME.SHOP, shopSchema);
+export const ShopModel = model<IShopDocument>(MODEL_NAME.SHOP, shopSchema);
