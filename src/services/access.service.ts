@@ -99,8 +99,8 @@ export class AccessService {
     };
   }
 
-  static async logout(keyToken: IKeyToken) {
-    return await KeyTokenService.deleteById(keyToken._id.toString());
+  static async logout(keyToken: IKeyToken): Promise<void> {
+    await KeyTokenService.deleteById(keyToken._id.toString());
   }
 
   static async handleRefreshToken(

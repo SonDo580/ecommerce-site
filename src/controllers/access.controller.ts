@@ -17,13 +17,13 @@ export class AccessController {
   }
 
   static async logout(req: CustomRequest, res: Response) {
-    const result = await AccessService.logout(req.keyToken);
-    new SuccessResponse(result).send(res);
+    await AccessService.logout(req.keyToken!);
+    new SuccessResponse({}).send(res);
   }
 
   static async handleRefreshToken(req: CustomRequest, res: Response) {
     const result = await AccessService.handleRefreshToken(
-      req.keyToken,
+      req.keyToken!,
       req.headers[Headers.REFRESH_TOKEN] as string
     );
     new SuccessResponse(result).send(res);
