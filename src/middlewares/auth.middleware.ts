@@ -80,6 +80,7 @@ export const checkAuthentication = asyncHandler(
     }
 
     req.keyToken = keyToken;
+    req.shop = decoded;
     next();
   }
 );

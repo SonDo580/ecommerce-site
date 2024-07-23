@@ -12,9 +12,7 @@ interface ElectronicsAttributes {
   color?: string;
 }
 
-export interface ProductAttributes
-  extends ClothingAttributes,
-    ElectronicsAttributes {}
+export type ProductAttributes = ClothingAttributes | ElectronicsAttributes;
 
 export interface CreateProductRequest {
   name: string;

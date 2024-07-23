@@ -1,26 +1,35 @@
 import { ProductType } from "@root/constants";
 import { ErrorMessage } from "@root/constants/message.const";
 import { BadRequestError } from "@root/core/error.response";
-import { CreateProductRequest, ProductAttributes } from "@root/interfaces/requests/create-product.request";
+import {
+  CreateProductRequest,
+  ProductAttributes,
+} from "@root/interfaces/requests/create-product.request";
 import { ClothingModel } from "@root/models/products/clothing.model";
 import { ElectronicsModel } from "@root/models/products/electronics.model";
+import { FurnitureModel } from "@root/models/products/furniture.model";
 import {
   IProductDocument,
   ProductModel,
 } from "@root/models/products/product.model";
 
 export class ProductFactory {
+  static productRegistry: {
+    [type: string]: typeof Product;
+  } = {};
+
+  static registerProduct(type: ProductType, productClass: typeof Product) {
+    ProductFactory.productRegistry[type] = productClass;
+  }
+
   static async createProduct(
     payload: CreateProductRequest
   ): Promise<IProductDocument> {
-    switch (payload.type) {
-      case ProductType.CLOTHING:
-        return new Clothing(payload).createProduct();
-      case ProductType.ELECTRONICS:
-        return new Electronics(payload).createProduct();
-      default:
-        throw new BadRequestError(ErrorMessage.INVALID_PRODUCT_TYPE);
+    const productClass = ProductFactory.productRegistry[payload.type];
+    if (!productClass) {
+      throw new BadRequestError(ErrorMessage.INVALID_PRODUCT_TYPE);
     }
+    return new productClass(payload).createProduct();
   }
 }
 
@@ -31,7 +40,7 @@ class Product {
   price: number;
   quantity: number;
   type: ProductType;
-  shopId: string;
+  shop: string;
   attributes: ProductAttributes;
 
   constructor({
@@ -50,25 +59,54 @@ class Product {
     this.price = price;
     this.quantity = quantity;
     this.type = type;
-    this.shopId = shopId;
+    this.shop = shopId;
     this.attributes = attributes;
   }
 
-  async createProduct() {
-    return await ProductModel.create(this);
+  async createProduct(productId?: string) {
+    return await ProductModel.create({
+      ...this,
+      ...(productId ? { _id: productId } : {}),
+    });
   }
 }
 
 class Clothing extends Product {
   async createProduct() {
-    await ClothingModel.create(this.attributes);
-    return await super.createProduct();
+    const clothing = await ClothingModel.create({
+      ...this.attributes,
+      shop: this.shop,
+    });
+    return await super.createProduct(clothing._id.toString());
   }
 }
 
 class Electronics extends Product {
   async createProduct() {
-    await ElectronicsModel.create(this.attributes);
-    return await super.createProduct();
+    const electronics = await ElectronicsModel.create({
+      ...this.attributes,
+      shop: this.shop,
+    });
+    return await super.createProduct(electronics._id.toString());
   }
+}
+
+class Furniture extends Product {
+  async createProduct() {
+    const furniture = await FurnitureModel.create({
+      ...this.attributes,
+      shop: this.shop,
+    });
+    return await super.createProduct(furniture._id.toString());
+  }
+}
+
+const productClassDict = {
+  [ProductType.CLOTHING]: Clothing,
+  [ProductType.ELECTRONICS]: Electronics,
+  [ProductType.FURNITURE]: Furniture,
+};
+
+for (const [type, productClass] of Object.entries(productClassDict)) {
+  ProductFactory.registerProduct(type as ProductType, productClass);
 }

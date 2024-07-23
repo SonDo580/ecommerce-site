@@ -6,6 +6,7 @@ export const MODEL_NAME = {
   PRODUCT: "Product",
   CLOTHING: "Clothing",
   ELECTRONICS: "Electronics",
+  FURNITURE: "Furniture",
 };
 
 export enum Role {
@@ -35,6 +36,7 @@ export enum Headers {
 export enum ProductType {
   ELECTRONICS = "Electronics",
   CLOTHING = "Clothing",
+  FURNITURE = "Furniture",
 }
 
 export enum ClothSize {

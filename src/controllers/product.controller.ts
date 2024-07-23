@@ -6,7 +6,8 @@ import { ProductFactory } from "@root/services/product.service";
 
 export class ProductController {
   static async createProduct(req: CustomRequest, res: Response) {
-    const result = await ProductFactory.createProduct(req.body);
+    const { shopId } = req.shop!;
+    const result = await ProductFactory.createProduct({ ...req.body, shopId });
     new CreatedResponse(result).send(res);
   }
 }
