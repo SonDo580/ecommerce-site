@@ -1,6 +1,6 @@
 import { Response } from "express";
 
-import { CreatedResponse } from "@root/core/success.response";
+import { CreatedResponse, SuccessResponse } from "@root/core/success.response";
 import { CustomRequest } from "@root/interfaces/custom-request.interface";
 import { ProductFactory } from "@root/services/product.service";
 
@@ -9,5 +9,55 @@ export class ProductController {
     const { shopId } = req.shop!;
     const result = await ProductFactory.createProduct({ ...req.body, shopId });
     new CreatedResponse(result).send(res);
+  }
+
+  static async publishProduct(req: CustomRequest, res: Response) {
+    const { shopId } = req.shop!;
+    const productId = req.params.id;
+
+    const result = await ProductFactory.publishProduct(shopId, productId);
+    new SuccessResponse(result).send(res);
+  }
+
+  static async unPublishProduct(req: CustomRequest, res: Response) {
+    const { shopId } = req.shop!;
+    const productId = req.params.id;
+
+    const result = await ProductFactory.unPublishProduct(shopId, productId);
+    new SuccessResponse(result).send(res);
+  }
+
+  static async findDrafts(req: CustomRequest, res: Response) {
+    const { shopId } = req.shop!;
+    const page = Number(req.query.page) || 1;
+    const size = Number(req.query.size) || 50;
+
+    const result = await ProductFactory.findDrafts(shopId, { page, size });
+    new SuccessResponse(result).send(res);
+  }
+
+  static async findPublished(req: CustomRequest, res: Response) {
+    const { shopId } = req.shop!;
+    const page = Number(req.query.page) || 1;
+    const size = Number(req.query.size) || 50;
+
+    const result = await ProductFactory.findPublished(shopId, {
+      page,
+      size,
+    });
+    new SuccessResponse(result).send(res);
+  }
+
+  static async findProductsForUser(req: CustomRequest, res: Response) {
+    const page = Number(req.query.page) || 1;
+    const size = Number(req.query.size) || 50;
+    const keyword = (req.query.keyword as string) || "";
+
+    const result = await ProductFactory.findProductsForUser({
+      page,
+      size,
+      keyword,
+    });
+    new SuccessResponse(result).send(res);
   }
 }

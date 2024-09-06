@@ -1,10 +1,14 @@
 import { ProductType } from "@root/constants";
 import { ErrorMessage } from "@root/constants/message.const";
-import { BadRequestError } from "@root/core/error.response";
+import { BadRequestError, NotFoundError } from "@root/core/error.response";
 import {
   CreateProductRequest,
   ProductAttributes,
 } from "@root/interfaces/requests/create-product.request";
+import {
+  PagingRequest,
+  PagingSearchRequest,
+} from "@root/interfaces/requests/list.request";
 import { ClothingModel } from "@root/models/products/clothing.model";
 import { ElectronicsModel } from "@root/models/products/electronics.model";
 import { FurnitureModel } from "@root/models/products/furniture.model";
@@ -30,6 +34,92 @@ export class ProductFactory {
       throw new BadRequestError(ErrorMessage.INVALID_PRODUCT_TYPE);
     }
     return new productClass(payload).createProduct();
+  }
+
+  private static async updatePublishStatus(
+    shopId: string,
+    productId: string,
+    published: boolean
+  ): Promise<boolean> {
+    const product = await ProductModel.findOne({
+      _id: productId,
+      shop: shopId,
+    });
+
+    if (!product) {
+      throw new NotFoundError(ErrorMessage.PRODUCT_NOT_FOUND);
+    }
+
+    if (product.published) {
+      throw new BadRequestError(ErrorMessage.PRODUCT_ALREADY_PUBLISHED);
+    }
+
+    const { modifiedCount } = await ProductModel.updateOne(
+      { _id: productId },
+      { published }
+    );
+
+    return modifiedCount > 0;
+  }
+
+  static async publishProduct(
+    shopId: string,
+    productId: string
+  ): Promise<boolean> {
+    return await this.updatePublishStatus(shopId, productId, true);
+  }
+
+  static async unPublishProduct(
+    shopId: string,
+    productId: string
+  ): Promise<boolean> {
+    return await this.updatePublishStatus(shopId, productId, false);
+  }
+
+  private static async findProducts(
+    shopId: string,
+    { page, size }: PagingRequest,
+    published: boolean
+  ): Promise<IProductDocument[]> {
+    return await ProductModel.find({ shop: shopId, published })
+      .populate("shop", "name email -_id")
+      .sort({ updatedAt: -1 })
+      .skip((page - 1) * size)
+      .limit(size)
+      .lean();
+  }
+
+  static async findDrafts(
+    shopId: string,
+    { page, size }: PagingRequest
+  ): Promise<IProductDocument[]> {
+    return await this.findProducts(shopId, { page, size }, false);
+  }
+
+  static async findPublished(
+    shopId: string,
+    { page, size }: PagingRequest
+  ): Promise<IProductDocument[]> {
+    return await this.findProducts(shopId, { page, size }, true);
+  }
+
+  static async findProductsForUser({
+    page,
+    size,
+    keyword,
+  }: PagingSearchRequest): Promise<IProductDocument[]> {
+    return await ProductModel.find(
+      {
+        published: true,
+        $text: { $search: keyword },
+      },
+      { score: { $meta: "textScore" } }
+    )
+      .populate("shop", "name email -_id")
+      .sort({ score: { $meta: "textScore" } })
+      .skip((page - 1) * size)
+      .limit(size)
+      .lean();
   }
 }
 
