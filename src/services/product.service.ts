@@ -115,11 +115,20 @@ export class ProductFactory {
       },
       { score: { $meta: "textScore" } }
     )
+      .select("-__v -variations")
       .populate("shop", "name email -_id")
       .sort({ score: { $meta: "textScore" } })
       .skip((page - 1) * size)
       .limit(size)
       .lean();
+  }
+
+  static async findProduct(
+    productId: string
+  ): Promise<IProductDocument | null> {
+    return await ProductModel.findById(productId)
+      .select("-__v -variations")
+      .populate("shop", "name email -_id");
   }
 }
 

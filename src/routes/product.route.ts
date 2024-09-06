@@ -6,7 +6,11 @@ import { asyncHandler } from "@root/middlewares/error-handler.middleware";
 
 const productRouter = Router();
 
-productRouter.get("/search", asyncHandler(ProductController.findProductsForUser));
+productRouter.get(
+  "/search",
+  asyncHandler(ProductController.findProductsForUser)
+);
+productRouter.get("/:id", asyncHandler(ProductController.findProduct));
 
 productRouter.use(checkAuthentication);
 

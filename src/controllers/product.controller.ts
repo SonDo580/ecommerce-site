@@ -60,4 +60,10 @@ export class ProductController {
     });
     new SuccessResponse(result).send(res);
   }
+
+  static async findProduct(req: CustomRequest, res: Response) {
+    const productId = req.params.id;
+    const result = await ProductFactory.findProduct(productId);
+    new SuccessResponse(result).send(res);
+  }
 }
