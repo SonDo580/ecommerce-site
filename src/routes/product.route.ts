@@ -6,13 +6,12 @@ import { asyncHandler } from "@root/middlewares/error-handler.middleware";
 
 const productRouter = Router();
 
-productRouter.get(
-  "/search",
-  asyncHandler(ProductController.findProductsForUser)
-);
-productRouter.get("/:id", asyncHandler(ProductController.findProduct));
+productRouter.get("/", asyncHandler(ProductController.findProductsForUser));
+productRouter.get("/:id", asyncHandler(ProductController.findProductForUser));
 
+// **********
 productRouter.use(checkAuthentication);
+// **********
 
 productRouter.post("/", asyncHandler(ProductController.createProduct));
 productRouter.post(
@@ -24,7 +23,13 @@ productRouter.post(
   asyncHandler(ProductController.unPublishProduct)
 );
 
-productRouter.get("/drafts", asyncHandler(ProductController.findDrafts));
-productRouter.get("/published", asyncHandler(ProductController.findPublished));
+productRouter.get(
+  "/drafts",
+  asyncHandler(ProductController.findShopDraftProducts)
+);
+productRouter.get(
+  "/published",
+  asyncHandler(ProductController.findShopPublishedProducts)
+);
 
 export { productRouter };

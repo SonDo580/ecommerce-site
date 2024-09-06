@@ -1,7 +1,13 @@
 import { ErrorMessage } from "@root/constants/message.const";
 import { BadRequestError, NotFoundError } from "@root/core/error.response";
-import { PagingRequest, PagingSearchRequest } from "@root/interfaces/requests/list.request";
-import { IProductDocument, ProductModel } from "@root/models/products/product.model";
+import {
+  PagingRequest,
+  PagingSearchRequest,
+} from "@root/interfaces/requests/list.request";
+import {
+  IProductDocument,
+  ProductModel,
+} from "@root/models/products/product.model";
 
 export class ProductService {
   private static async updatePublishStatus(
@@ -44,7 +50,7 @@ export class ProductService {
     return await this.updatePublishStatus(shopId, productId, false);
   }
 
-  private static async findProducts(
+  private static async findShopProducts(
     shopId: string,
     { page, size }: PagingRequest,
     published: boolean
@@ -57,18 +63,18 @@ export class ProductService {
       .lean();
   }
 
-  static async findDrafts(
+  static async findShopDraftProducts(
     shopId: string,
     { page, size }: PagingRequest
   ): Promise<IProductDocument[]> {
-    return await this.findProducts(shopId, { page, size }, false);
+    return await this.findShopProducts(shopId, { page, size }, false);
   }
 
-  static async findPublished(
+  static async findShopPublishedProducts(
     shopId: string,
     { page, size }: PagingRequest
   ): Promise<IProductDocument[]> {
-    return await this.findProducts(shopId, { page, size }, true);
+    return await this.findShopProducts(shopId, { page, size }, true);
   }
 
   static async findProductsForUser({
@@ -76,6 +82,16 @@ export class ProductService {
     size,
     keyword,
   }: PagingSearchRequest): Promise<IProductDocument[]> {
+    if (!keyword) {
+      return await ProductModel.find({
+        published: true,
+      })
+        .select("-__v -variations -createdAt -updatedAt")
+        .skip((page - 1) * size)
+        .limit(size)
+        .lean();
+    }
+
     return await ProductModel.find(
       {
         published: true,
@@ -83,19 +99,18 @@ export class ProductService {
       },
       { score: { $meta: "textScore" } }
     )
-      .select("-__v -variations")
-      .populate("shop", "name email -_id")
+      .select("-__v -variations -createdAt -updatedAt")
       .sort({ score: { $meta: "textScore" } })
       .skip((page - 1) * size)
       .limit(size)
       .lean();
   }
 
-  static async findProduct(
+  static async findProductForUser(
     productId: string
   ): Promise<IProductDocument | null> {
-    return await ProductModel.findById(productId)
-      .select("-__v -variations")
-      .populate("shop", "name email -_id");
+    return await ProductModel.findOne({ _id: productId, published: true })
+      .select("-__v -variations -createdAt -updatedAt")
+      .lean();
   }
 }

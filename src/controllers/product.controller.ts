@@ -4,6 +4,7 @@ import { CreatedResponse, SuccessResponse } from "@root/core/success.response";
 import { CustomRequest } from "@root/interfaces/custom-request.interface";
 import { ProductFactory } from "@root/services/product.factory";
 import { ProductService } from "@root/services/product.service";
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from "@root/constants/query.const";
 
 export class ProductController {
   static async createProduct(req: CustomRequest, res: Response) {
@@ -28,21 +29,24 @@ export class ProductController {
     new SuccessResponse(result).send(res);
   }
 
-  static async findDrafts(req: CustomRequest, res: Response) {
+  static async findShopDraftProducts(req: CustomRequest, res: Response) {
     const { shopId } = req.shop!;
-    const page = Number(req.query.page) || 1;
-    const size = Number(req.query.size) || 50;
+    const page = Number(req.query.page) || DEFAULT_PAGE;
+    const size = Number(req.query.size) || DEFAULT_PAGE_SIZE;
 
-    const result = await ProductService.findDrafts(shopId, { page, size });
+    const result = await ProductService.findShopDraftProducts(shopId, {
+      page,
+      size,
+    });
     new SuccessResponse(result).send(res);
   }
 
-  static async findPublished(req: CustomRequest, res: Response) {
+  static async findShopPublishedProducts(req: CustomRequest, res: Response) {
     const { shopId } = req.shop!;
-    const page = Number(req.query.page) || 1;
-    const size = Number(req.query.size) || 50;
+    const page = Number(req.query.page) || DEFAULT_PAGE;
+    const size = Number(req.query.size) || DEFAULT_PAGE_SIZE;
 
-    const result = await ProductService.findPublished(shopId, {
+    const result = await ProductService.findShopPublishedProducts(shopId, {
       page,
       size,
     });
@@ -50,9 +54,9 @@ export class ProductController {
   }
 
   static async findProductsForUser(req: CustomRequest, res: Response) {
-    const page = Number(req.query.page) || 1;
-    const size = Number(req.query.size) || 50;
-    const keyword = (req.query.keyword as string) || "";
+    const page = Number(req.query.page) || DEFAULT_PAGE;
+    const size = Number(req.query.size) || DEFAULT_PAGE_SIZE;
+    const keyword = req.query.keyword as string | undefined;
 
     const result = await ProductService.findProductsForUser({
       page,
@@ -62,9 +66,9 @@ export class ProductController {
     new SuccessResponse(result).send(res);
   }
 
-  static async findProduct(req: CustomRequest, res: Response) {
+  static async findProductForUser(req: CustomRequest, res: Response) {
     const productId = req.params.id;
-    const result = await ProductService.findProduct(productId);
+    const result = await ProductService.findProductForUser(productId);
     new SuccessResponse(result).send(res);
   }
 }
