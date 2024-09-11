@@ -13,6 +13,16 @@ export class ProductController {
     new CreatedResponse(result).send(res);
   }
 
+  static async updateProduct(req: CustomRequest, res: Response) {
+    const productId = req.params.id;
+    const { shopId } = req.shop!;
+    const result = await ProductFactory.updateProduct(productId, {
+      ...req.body,
+      shopId,
+    });
+    new SuccessResponse(result).send(res);
+  }
+
   static async publishProduct(req: CustomRequest, res: Response) {
     const { shopId } = req.shop!;
     const productId = req.params.id;

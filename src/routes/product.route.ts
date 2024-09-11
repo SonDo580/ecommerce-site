@@ -23,6 +23,8 @@ productRouter.post(
   asyncHandler(ProductController.unPublishProduct)
 );
 
+productRouter.patch("/:id", asyncHandler(ProductController.updateProduct));
+
 productRouter.get(
   "/drafts",
   asyncHandler(ProductController.findShopDraftProducts)

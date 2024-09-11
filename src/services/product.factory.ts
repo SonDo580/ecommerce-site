@@ -1,10 +1,11 @@
 import { ProductType } from "@root/constants";
 import { ErrorMessage } from "@root/constants/message.const";
-import { BadRequestError } from "@root/core/error.response";
+import { BadRequestError, NotFoundError } from "@root/core/error.response";
 import {
   CreateProductRequest,
   ProductAttributes,
 } from "@root/interfaces/requests/create-product.request";
+import { PatchProductRequest } from "@root/interfaces/requests/update-product.request";
 import { ClothingModel } from "@root/models/products/clothing.model";
 import { ElectronicsModel } from "@root/models/products/electronics.model";
 import { FurnitureModel } from "@root/models/products/furniture.model";
@@ -30,6 +31,14 @@ export class ProductFactory {
       throw new BadRequestError(ErrorMessage.INVALID_PRODUCT_TYPE);
     }
     return new productClass(payload).createProduct();
+  }
+
+  static async updateProduct(productId: string, payload: PatchProductRequest) {
+    const productClass = ProductFactory.productRegistry[payload.type];
+    if (!productClass) {
+      throw new BadRequestError(ErrorMessage.INVALID_PRODUCT_TYPE);
+    }
+    return productClass.updateProduct(productId, payload);
   }
 }
 
@@ -69,6 +78,14 @@ class Product {
       ...(productId ? { _id: productId } : {}),
     });
   }
+
+  static async updateProduct(productId: string, payload: PatchProductRequest) {
+    return await ProductModel.findOneAndUpdate(
+      { _id: productId, shop: payload.shopId, type: payload.type },
+      payload,
+      { new: true }
+    );
+  }
 }
 
 class Clothing extends Product {
@@ -78,6 +95,31 @@ class Clothing extends Product {
       shop: this.shop,
     });
     return await super.createProduct(clothing._id.toString());
+  }
+
+  static async updateProduct(productId: string, payload: PatchProductRequest) {
+    // TODO: 
+    // Remove null/undefined attribute
+    // Update nested object
+    // Refactor code: extract common operations
+
+    if (
+      !(await ProductModel.exists({
+        _id: productId,
+        shop: payload.shopId,
+        type: payload.type,
+      }))
+    ) {
+      throw new NotFoundError(ErrorMessage.PRODUCT_NOT_FOUND);
+    }
+
+    if (payload.attributes) {
+      await ClothingModel.findOneAndUpdate(
+        { _id: productId, shop: payload.shopId },
+        payload.attributes
+      );
+    }
+    return await super.updateProduct(productId, payload);
   }
 }
 
@@ -89,6 +131,26 @@ class Electronics extends Product {
     });
     return await super.createProduct(electronics._id.toString());
   }
+
+  static async updateProduct(productId: string, payload: PatchProductRequest) {
+    if (
+      !(await ProductModel.exists({
+        _id: productId,
+        shop: payload.shopId,
+        type: payload.type,
+      }))
+    ) {
+      throw new NotFoundError(ErrorMessage.PRODUCT_NOT_FOUND);
+    }
+
+    if (payload.attributes) {
+      await ElectronicsModel.findOneAndUpdate(
+        { _id: productId, shop: payload.shopId },
+        payload.attributes
+      );
+    }
+    return await super.updateProduct(productId, payload);
+  }
 }
 
 class Furniture extends Product {
@@ -98,6 +160,26 @@ class Furniture extends Product {
       shop: this.shop,
     });
     return await super.createProduct(furniture._id.toString());
+  }
+
+  static async updateProduct(productId: string, payload: PatchProductRequest) {
+    if (
+      !(await ProductModel.exists({
+        _id: productId,
+        shop: payload.shopId,
+        type: payload.type,
+      }))
+    ) {
+      throw new NotFoundError(ErrorMessage.PRODUCT_NOT_FOUND);
+    }
+
+    if (payload.attributes) {
+      await FurnitureModel.findOneAndUpdate(
+        { _id: productId, shop: payload.shopId },
+        payload.attributes
+      );
+    }
+    return await super.updateProduct(productId, payload);
   }
 }
 

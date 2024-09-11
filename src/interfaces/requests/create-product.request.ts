@@ -1,18 +1,27 @@
 import { ClothSize, ProductType } from "@root/constants";
 
-interface ClothingAttributes {
+export interface ClothingAttributes {
   brand: string;
   size?: ClothSize;
   material?: string;
 }
 
-interface ElectronicsAttributes {
+export interface ElectronicsAttributes {
   manufacturer: string;
   model?: string;
   color?: string;
 }
 
-export type ProductAttributes = ClothingAttributes | ElectronicsAttributes;
+export interface FurnitureAttributes {
+  brand: string;
+  size?: string;
+  material?: string;
+}
+
+export type ProductAttributes =
+  | ClothingAttributes
+  | ElectronicsAttributes
+  | FurnitureAttributes;
 
 export interface CreateProductRequest {
   name: string;
