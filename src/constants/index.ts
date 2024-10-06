@@ -2,7 +2,8 @@ export const MODEL_NAME = {
   API_KEY: "ApiKey",
   KEY_TOKEN: "KeyToken",
   SHOP: "Shop",
-  INVENTORY: 'Inventory',
+  INVENTORY: "Inventory",
+  DISCOUNT: "DISCOUNT",
 
   PRODUCT: "Product",
   CLOTHING: "Clothing",
@@ -47,4 +48,14 @@ export enum ClothSize {
   L = "L",
   XL = "XL",
   XXL = "XXL",
+}
+
+export enum DiscountType {
+  AMOUNT = "amount",
+  PERCENTAGE = "percentage",
+}
+
+export enum DiscountScope {
+  ALL = "all",
+  SPECIFIC = "specific",
 }
