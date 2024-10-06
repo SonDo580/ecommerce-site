@@ -34,7 +34,6 @@ const productSchema = new Schema<IProductDocument>(
     },
     slug: {
       type: String,
-      required: true,
     },
     description: {
       type: String,
@@ -60,6 +59,7 @@ const productSchema = new Schema<IProductDocument>(
     shop: {
       type: Schema.Types.ObjectId,
       ref: MODEL_NAME.SHOP,
+      required: true,
     },
     attributes: {
       type: Schema.Types.Mixed,
@@ -94,6 +94,7 @@ productSchema.index({ name: "text", description: "text" });
 // Middleware
 productSchema.pre("save", function (next) {
   this.slug = slugify(this.name, { lower: true });
+  console.log(this.slug);
   next();
 });
 

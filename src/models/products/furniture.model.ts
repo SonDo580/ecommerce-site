@@ -19,6 +19,7 @@ const furnitureSchema = new Schema<IFurnitureDocument>(
     shop: {
       type: Schema.Types.ObjectId,
       ref: MODEL_NAME.SHOP,
+      required: true,
     },
   },
   {

@@ -19,6 +19,7 @@ const clothingSchema = new Schema<IClothingDocument>(
     shop: {
       type: Schema.Types.ObjectId,
       ref: MODEL_NAME.SHOP,
+      required: true,
     },
   },
   {

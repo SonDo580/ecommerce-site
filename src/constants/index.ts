@@ -2,6 +2,7 @@ export const MODEL_NAME = {
   API_KEY: "ApiKey",
   KEY_TOKEN: "KeyToken",
   SHOP: "Shop",
+  INVENTORY: 'Inventory',
 
   PRODUCT: "Product",
   CLOTHING: "Clothing",

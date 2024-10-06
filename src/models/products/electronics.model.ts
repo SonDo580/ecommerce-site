@@ -21,6 +21,7 @@ const electronicsSchema = new Schema<IElectronicsDocument>(
     shop: {
       type: Schema.Types.ObjectId,
       ref: MODEL_NAME.SHOP,
+      required: true,
     },
   },
   {

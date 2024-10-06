@@ -6,6 +6,7 @@ import {
   ProductAttributes,
 } from "@root/interfaces/requests/create-product.request";
 import { PatchProductRequest } from "@root/interfaces/requests/update-product.request";
+import { InventoryModel } from "@root/models/inventory.model";
 import { ClothingModel } from "@root/models/products/clothing.model";
 import { ElectronicsModel } from "@root/models/products/electronics.model";
 import { FurnitureModel } from "@root/models/products/furniture.model";
@@ -73,10 +74,18 @@ class Product {
   }
 
   async createProduct(productId?: string) {
-    return await ProductModel.create({
+    const newProduct = await ProductModel.create({
       ...this,
       ...(productId ? { _id: productId } : {}),
     });
+
+    await InventoryModel.create({
+      product: newProduct._id,
+      shop: this.shop,
+      stock: this.quantity
+    })
+
+    return newProduct
   }
 
   static async updateProduct(productId: string, payload: PatchProductRequest) {
